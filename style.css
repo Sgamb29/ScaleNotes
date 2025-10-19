@@ -1,0 +1,69 @@
+
+html, body {
+    height: 100%;
+    margin: 0px;
+}
+
+.container {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: beige;
+}
+
+.fretboard {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    
+}
+
+.string {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(90deg, white, black, white);
+    margin: 2px;
+}
+
+.note {
+    text-align: center;
+    margin: 3px;
+    padding: 3px;
+    border: solid 1px black;
+    background-color: white;
+    font-size: x-large;
+}
+
+.opts {
+    font-size: xx-large;
+    margin: 8px;
+}
+
+.name {
+    background-color: lightblue;
+}
+
+.greenBackground {
+    background-color: lightgreen;
+}
+
+.darkGreen {
+    background-color: green;
+}
+
+.whiteBackground {
+    background-color: white;
+}
+
+.purpleBackground {
+    background-color: purple;
+}
+
+#screenWake {
+    font-size: large;
+    margin-bottom: 0px;
+    background-color: lightgray;
+    font-style: italic;
+}
