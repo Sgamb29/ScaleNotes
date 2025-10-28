@@ -6,8 +6,11 @@ class Scale {
     // Steps for building the scales from roots
     majorScaleSteps = [2, 2, 1, 2, 2, 2, 1];
     minorScaleSteps = [2, 1, 2, 2, 1, 2, 2];
+    harmonicMinorSteps = [2, 1, 2, 2, 1, 3, 1];
     pentatonicSteps = [2, 2, 3, 2, 3];
     minorPentatonicSteps = [3, 2, 2, 3, 2];
+    majorBluesSteps = [2, 1, 1, 3, 2, 3];
+    minorBluesSteps = [3, 2, 1, 1, 3, 2];
     steps = [];
     // Initial roots to build off of and initial variables
     cRoots = ["6-8", "5-3", "4-10", "3-5", "2-1", "1-8"];
@@ -72,6 +75,15 @@ class Scale {
                 break;
             case "minor pentatonic":
                 this.steps = this.minorPentatonicSteps;
+                break;
+            case "minor blues":
+                this.steps = this.minorBluesSteps;
+                break;
+            case "major blues":
+                this.steps = this.majorBluesSteps;
+                break;
+            case "harmonic minor":
+                this.steps = this.harmonicMinorSteps;
                 break;
             default:
                 this.steps = this.majorScaleSteps;
@@ -144,6 +156,9 @@ const maj = "major";
 const min = "minor";
 const penta = "pentatonic";
 const minPenta = "minor pentatonic";
+const minBlues = "minor blues";
+const majBlues = "major blues";
+const harmonicMinor = "harmonic minor";
 // Used for display
 let SCALETYPE = maj;
 let NOTE = "C";
@@ -223,6 +238,15 @@ function changeType(type) {
         case "minor pentatonic":
             SCALETYPE = minPenta;
             break;
+        case "minor blues":
+            SCALETYPE = minBlues;
+            break;
+        case "major blues":
+            SCALETYPE = majBlues;
+            break;
+        case "harmonic minor":
+            SCALETYPE = harmonicMinor;
+            break;
         default:
             SCALETYPE = maj;
             break;
@@ -284,4 +308,57 @@ screenWake.addEventListener("click", async () =>{
             wakeLabel.innerText = "";
           });
     }
-})
+});
+
+// Traffic count functions + cookie functions
+function setCookie(name, value, days) {
+    const date = new Date();
+    date.setTime(date.getTime() + (days*24*60*60*1000));
+    const expires = `expires=${date.toUTCString()}`;
+    document.cookie = `${name}=${value};${expires};path=/`;
+}
+
+function getCookie(name) {
+    try {
+        const value = document.cookie.split(`${name}=`)[1].split(";")[0];
+        return value;
+        } catch {
+            return "";
+        }
+}
+
+let lastFetchCall = "";
+const cookieName = "lastFetchScales";
+function makeTrafficCall() {
+    // Logic for fetch to only call once per day;
+    const time = new Date();
+    const DOTW = time.getDay();
+
+
+    // // Traffic
+    const request = new Request("https://server.sgambapps.com/?site=scalenotes", {
+        method: "POST",
+    });
+    if (lastFetchCall !== parseInt(DOTW)) {
+        fetch(request)
+        .then(res => {
+            if (res.ok) {
+            console.log("visit counted");
+            }
+        })
+        .catch(err => console.log(err));
+        setCookie(cookieName, DOTW.toString(), 6);
+        console.log("cookie set");
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    try {
+        const ld = getCookie(cookieName);
+        lastFetchCall = ld !== "" ? parseInt(ld) : "";
+        makeTrafficCall();
+    } catch (e) {
+        console.log("get cookie error");
+        console.log(e);
+    }
+});       
