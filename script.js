@@ -14,6 +14,11 @@ class Scale {
     steps = [];
     // Initial roots to build off of and initial variables
     cRoots = ["6-8", "5-3", "4-10", "3-5", "2-1", "1-8"];
+    // Roots for other tunings to use in changeRoots Function
+    dropdCRoots = ["6-10", "5-3", "4-10", "3-5", "2-1", "1-8"];
+    dStandardCRoots = ["6-10", "5-5", "4-12", "3-7", "2-3", "1-10"];
+    cRootsToUse = this.cRoots;
+
     newScaleRoots = [];
     stepsFromC;
 
@@ -58,6 +63,23 @@ class Scale {
                 break;
             default:
                 this.stepsFromC = 0;
+                break;
+        }
+    }
+
+    setCRootsToUse(tuning) {
+        switch (tuning) {
+            case "Standard":
+                this.cRootsToUse = this.cRoots;
+                break;
+            case "Drop-D":
+                this.cRootsToUse = this.dropdCRoots;
+                break;
+            case "D-Standard":
+                this.cRootsToUse = this.dStandardCRoots;
+                break;
+            default:
+                this.cRootsToUse = this.cRoots;
                 break;
         }
     }
@@ -127,7 +149,7 @@ class Scale {
     }
 
     generateRoots() {
-        this.cRoots.forEach((r) => {
+        this.cRootsToUse.forEach((r) => {
             const str = r.split("-")[0];
             const fret = r.split("-")[1];
             let newRoot = parseInt(fret) + this.stepsFromC;
@@ -159,15 +181,20 @@ const minPenta = "minor pentatonic";
 const minBlues = "minor blues";
 const majBlues = "major blues";
 const harmonicMinor = "harmonic minor";
+// Used for changing tuning
+const standardTuning = "Standard";
+const dropDTuning = "Drop-D";
+const dStandardTuning = "D-Standard";
 // Used for display
 let SCALETYPE = maj;
 let NOTE = "C";
+let TUNING = standardTuning;
 
 // Update button color if it's the current selected button
 function changeSelectedButton() {
     const buttons = document.querySelectorAll("button");
     buttons.forEach((b) => {
-        b.classList = "note name";
+        b.classList = "note name opts";
     })
     buttons.forEach((b) => {
        if (b.innerText == NOTE) {
@@ -176,7 +203,28 @@ function changeSelectedButton() {
        if (b.innerText.toUpperCase() == SCALETYPE.toUpperCase()) {
             b.classList = b.classList + " greenBackground";
        }
+       if (b.innerText == TUNING) {
+            b.classList = b.classList + " greenBackground";
+       }
     })
+}
+
+function changeTuning(tuning) {
+    switch (tuning) {
+        case '0':
+            TUNING = standardTuning;
+            break;
+        case '1':
+            TUNING = dropDTuning;
+            break;
+        case '2':
+            TUNING = dStandardTuning;
+            break;
+        default:
+            TUNING = standardTuning;
+            break;
+    }
+    display();
 }
 
 function changeKey(note) {
@@ -254,23 +302,9 @@ function changeType(type) {
     display();
 }
 
-function changeSelectedButton() {
-    const buttons = document.querySelectorAll("button");
-    buttons.forEach((b) => {
-        b.classList = "note name opts";
-    })
-    buttons.forEach((b) => {
-       if (b.innerText == NOTE) {
-            b.classList = b.classList + " greenBackground";
-       } 
-       if (b.innerText.toUpperCase() == SCALETYPE.toUpperCase()) {
-            b.classList = b.classList + " greenBackground";
-       }
-    })
-}
-
 function display() {
     changeSelectedButton();
+    scale.setCRootsToUse(TUNING);
     scale.setScaleKey(NOTE);
     scale.setScaleType(SCALETYPE);
     scale.displayScale()
